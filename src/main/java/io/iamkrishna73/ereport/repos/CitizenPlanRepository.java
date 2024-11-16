@@ -15,17 +15,17 @@ public interface CitizenPlanRepository extends JpaRepository<CitizenPlan, Intege
     List<String> getPlanName();
     @Query("select distinct(planStatus) from CitizenPlan")
     List<String> getPlanStatus();
-
-    @Query(value = "SELECT * FROM citizen_plan_info c WHERE " +
-            "(:planName IS NULL OR c.plan_name = :planName) AND " +
-            "(:planStatus IS NULL OR c.plan_status = :planStatus) AND " +
-            "(:gender IS NULL OR c.gender = :gender) AND " +
-            "(:planStartDate IS NULL OR c.plan_start_date >= :planStartDate) AND " +
-            "(:planEndDate IS NULL OR c.plan_end_date <= :planEndDate)", nativeQuery = true)
+    @Query(value = "SELECT c FROM CitizenPlan c " +
+            "WHERE (:planName IS NULL OR :planName = '' OR c.planName = :planName) " +
+            "AND (:planStatus IS NULL OR :planStatus = '' OR c.planStatus = :planStatus) " +
+            "AND (:gender IS NULL OR :gender = '' OR c.gender = :gender) " +
+            "AND (:planStartDate IS NULL OR :planStartDate = '' OR c.planStartDate >= :planStartDate) " +
+            "AND (:planEndDate IS NULL OR :planEndDate = '' OR c.planEndDate <= :planEndDate)")
     List<CitizenPlan> findCitizenWithSpecificFields(
             @Param("planName") String planName,
             @Param("planStatus") String planStatus,
             @Param("gender") String gender,
             @Param("planStartDate") String planStartDate,
             @Param("planEndDate") String planEndDate);
+
 }

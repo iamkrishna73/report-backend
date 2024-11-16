@@ -42,7 +42,7 @@ public class ReportService implements IReportService {
 
     @Override
     public List<CitizenPlan> sendData(String planName, String planStatus, String gender, String planStartDate, String planEndDate) {
-        return citizenPlanRepository.findCitizenWithSpecificFields(planName, planStatus, gender, planStartDate,planEndDate);
+        return citizenPlanRepository.findCitizenWithSpecificFields(planName, planStatus, gender, planStartDate, planEndDate);
 
     }
 

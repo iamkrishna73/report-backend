@@ -2,6 +2,8 @@ package io.iamkrishna73.ereport.controller;
 
 import io.iamkrishna73.ereport.entity.CitizenPlan;
 import io.iamkrishna73.ereport.service.IReportService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,7 +31,7 @@ public class ReportController {
     }
 
     @GetMapping("/search")
-    public List<CitizenPlan> getReport(@RequestParam(required = false) String planName, @RequestParam(required = false) String planStatus, @RequestParam(required = false) String gender, @RequestParam(required = false) String planStartDate, @RequestParam(required = false) String planEndDate) {
+    public ResponseEntity<?> getReport(@RequestParam(required = false) String planName, @RequestParam(required = false) String planStatus, @RequestParam(required = false) String gender, @RequestParam(required = false) String planStartDate, @RequestParam(required = false) String planEndDate) {
 
         System.out.println("Received Plan Name: " + planName);
         System.out.println("Received Plan Status: " + planStatus);
@@ -37,9 +39,9 @@ public class ReportController {
         System.out.println("Start Date: " + planStartDate);
         System.out.println("End Date: " + planEndDate);
 
-        List<CitizenPlan> data = reportService.sendData(planName, planStatus, gender, planStartDate, planEndDate);
-        System.out.println(data);
-
-        return data;
+        List<CitizenPlan> citizenPlanList = reportService.sendData(planName, planStatus, gender, planStartDate, planEndDate);
+        System.out.println(citizenPlanList);
+        //return null;
+        return new ResponseEntity<>(citizenPlanList, HttpStatus.ACCEPTED);
     }
 }

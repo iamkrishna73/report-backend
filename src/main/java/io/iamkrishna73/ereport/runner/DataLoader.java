@@ -29,8 +29,8 @@ public class DataLoader implements ApplicationRunner {
         cp1.setGender("Male");
         cp1.setPlanName("Cash");
         cp1.setPlanStatus("Approved");
-        cp1.setPlanStartDate(LocalDate.now());
-        cp1.setPlanEndDate(LocalDate.now().plusMonths(6));
+        cp1.setPlanStartDate(String.valueOf(LocalDate.now()));
+        cp1.setPlanEndDate(String.valueOf(LocalDate.now().plusMonths(6)));
         cp1.setBenefitsAmount(1500.00);
 
         CitizenPlan cp2 = new CitizenPlan();
@@ -45,10 +45,10 @@ public class DataLoader implements ApplicationRunner {
         cp3.setGender("Male");
         cp3.setPlanName("Medical");
         cp3.setPlanStatus("Terminated");
-        cp3.setPlanStartDate(LocalDate.now().minusMonths(4));
-        cp3.setPlanEndDate(LocalDate.now().plusMonths(6));
+        cp3.setPlanStartDate(String.valueOf(LocalDate.now().minusMonths(4)));
+        cp3.setPlanEndDate(String.valueOf(LocalDate.now().plusMonths(6)));
         cp3.setBenefitsAmount(2000.00);
-        cp3.setTerminateDate(LocalDate.now());
+        cp3.setTerminateDate(String.valueOf(LocalDate.now()));
         cp3.setTerminatedReason("Violation of terms");
 
         CitizenPlan cp4 = new CitizenPlan();
@@ -56,8 +56,8 @@ public class DataLoader implements ApplicationRunner {
         cp4.setGender("Female");
         cp4.setPlanName("Employment");
         cp4.setPlanStatus("Approved");
-        cp4.setPlanStartDate(LocalDate.now());
-        cp4.setPlanEndDate(LocalDate.now().plusMonths(6));
+        cp4.setPlanStartDate(String.valueOf(LocalDate.now()));
+        cp4.setPlanEndDate(String.valueOf(LocalDate.now().plusMonths(6)));
         cp4.setBenefitsAmount(3000.00);
 
         CitizenPlan cp5 = new CitizenPlan();
@@ -72,8 +72,8 @@ public class DataLoader implements ApplicationRunner {
         cp6.setGender("Female");
         cp6.setPlanName("Medical");
         cp6.setPlanStatus("Approved");
-        cp6.setPlanStartDate(LocalDate.now());
-        cp6.setPlanEndDate(LocalDate.now().plusMonths(6));
+        cp6.setPlanStartDate(String.valueOf(LocalDate.now()));
+        cp6.setPlanEndDate(String.valueOf(LocalDate.now().plusMonths(6)));
         cp6.setBenefitsAmount(2500.00);
 
         CitizenPlan cp7 = new CitizenPlan();
@@ -81,10 +81,10 @@ public class DataLoader implements ApplicationRunner {
         cp7.setGender("Male");
         cp7.setPlanName("Food");
         cp7.setPlanStatus("Terminated");
-        cp7.setPlanStartDate(LocalDate.now().minusMonths(4));
-        cp7.setPlanEndDate(LocalDate.now().plusMonths(6));
+        cp7.setPlanStartDate(String.valueOf(LocalDate.now().minusMonths(4)));
+        cp7.setPlanEndDate(String.valueOf(LocalDate.now().plusMonths(6)));
         cp7.setBenefitsAmount(1800.00);
-        cp7.setTerminateDate(LocalDate.now());
+        cp7.setTerminateDate(String.valueOf(LocalDate.now()));
         cp7.setTerminatedReason("Moved out of area");
 
         CitizenPlan cp8 = new CitizenPlan();
@@ -99,11 +99,28 @@ public class DataLoader implements ApplicationRunner {
         cp9.setGender("Male");
         cp9.setPlanName("Medical");
         cp9.setPlanStatus("Approved");
-        cp9.setPlanStartDate(LocalDate.now());
-        cp9.setPlanEndDate(LocalDate.now().plusMonths(6));
+        cp9.setPlanStartDate(String.valueOf(LocalDate.now()));
+        cp9.setPlanEndDate(String.valueOf(LocalDate.now().plusMonths(6)));
         cp9.setBenefitsAmount(2200.00);
 
+        CitizenPlan cp10 = new CitizenPlan();
+        cp10.setCitizenName("Sophia");
+        cp10.setGender("Male");
+        cp10.setPlanName("Medical");
+        cp10.setPlanStatus("Approved");
+        cp10.setPlanStartDate(String.valueOf(LocalDate.now()));
+        cp10.setPlanEndDate(String.valueOf(LocalDate.now().plusMonths(3)));
+        cp10.setBenefitsAmount(1500.00);
+
+        CitizenPlan cp11 = new CitizenPlan();
+        cp11.setCitizenName("Michael");
+        cp11.setGender("Male");
+        cp11.setPlanName("Medical");
+        cp11.setPlanStatus("Approved");
+        cp11.setPlanStartDate(String.valueOf(LocalDate.now()));
+        cp11.setPlanEndDate(String.valueOf(LocalDate.now().plusMonths(12)));
+        cp11.setBenefitsAmount(3000.00);
         // Save all instances to the database
-        citizenPlanRepository.saveAll(Arrays.asList(cp1, cp2, cp3, cp4, cp5, cp6, cp7, cp8, cp9));
+        citizenPlanRepository.saveAll(Arrays.asList(cp1, cp2, cp3, cp4, cp5, cp6, cp7, cp8, cp9, cp10,cp11));
     }
 }
