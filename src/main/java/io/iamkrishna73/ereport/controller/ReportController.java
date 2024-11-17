@@ -2,13 +2,20 @@ package io.iamkrishna73.ereport.controller;
 
 import io.iamkrishna73.ereport.entity.CitizenPlan;
 import io.iamkrishna73.ereport.service.IReportService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -43,5 +50,16 @@ public class ReportController {
         System.out.println(citizenPlanList);
         //return null;
         return new ResponseEntity<>(citizenPlanList, HttpStatus.ACCEPTED);
+    }
+    @GetMapping("/download")
+    private ResponseEntity<InputStreamResource> download() throws IOException {
+        String fileName ="plans.xlsx";
+        ByteArrayInputStream inputStream = reportService.getDataDownloaded();
+        InputStreamResource    response = new InputStreamResource(inputStream);
+
+        ResponseEntity<InputStreamResource> responseEntity = ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,"attachment;filename="+fileName)
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(response);
+        return responseEntity;
     }
 }

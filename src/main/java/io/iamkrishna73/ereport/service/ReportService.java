@@ -3,18 +3,23 @@ package io.iamkrishna73.ereport.service;
 import io.iamkrishna73.ereport.entity.CitizenPlan;
 import io.iamkrishna73.ereport.repos.CitizenPlanRepository;
 import io.iamkrishna73.ereport.request.SearchRequest;
-import org.springframework.data.domain.Example;
+import io.iamkrishna73.ereport.utils.ExcelGenerator;
+import io.iamkrishna73.ereport.utils.ExcelUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ReportService implements IReportService {
     private final CitizenPlanRepository citizenPlanRepository;
+    private final ExcelGenerator excelGenerator;
 
-    public ReportService(CitizenPlanRepository citizenPlanRepository) {
+    public ReportService(CitizenPlanRepository citizenPlanRepository, ExcelGenerator excelGenerator) {
         this.citizenPlanRepository = citizenPlanRepository;
+        this.excelGenerator = excelGenerator;
     }
 
     @Override
@@ -31,19 +36,14 @@ public class ReportService implements IReportService {
         return citizenPlanRepository.findAll();
     }
     @Override
-    public boolean exportPdf() {
-        return false;
-    }
-
-    @Override
-    public boolean exportExcel() {
-        return false;
+    public ByteArrayInputStream getDataDownloaded() throws IOException {
+        List<CitizenPlan> plans = citizenPlanRepository.findAll();
+        ByteArrayInputStream data = ExcelUtil.dataToExcel(plans);
+        return data;
     }
 
     @Override
     public List<CitizenPlan> sendData(String planName, String planStatus, String gender, String planStartDate, String planEndDate) {
-        return citizenPlanRepository.findCitizenWithSpecificFields(planName, planStatus, gender, planStartDate, planEndDate);
-
+        return citizenPlanRepository.findCitizenWithSpecificFields(planName, planStatus, gender, planStartDate,planEndDate);
     }
-
 }
