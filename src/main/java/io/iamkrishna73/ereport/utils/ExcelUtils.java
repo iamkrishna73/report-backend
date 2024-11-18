@@ -2,22 +2,19 @@ package io.iamkrishna73.ereport.utils;
 
 
 import io.iamkrishna73.ereport.entity.CitizenPlan;
-import org.apache.commons.math3.stat.descriptive.summary.Product;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 
-public class ExcelUtil {
+public class ExcelUtils {
     public static String HEADER[] = {"id", "citizen name", "plan name", "plan status", "plan start date", "plan end date", "benefits amount"};
-    public static String SHEET_NAME = "PlanSheet";
-    public static ByteArrayInputStream dataToExcel(List<CitizenPlan> citizenPlanList) throws IOException {
+    public static String SHEET_NAME = "PlansSheet";
+    public static ByteArrayInputStream downloadToExcel(List<CitizenPlan> citizenPlanList, File file) throws IOException {
 
         Workbook workbook  = new XSSFWorkbook();
 
@@ -58,6 +55,9 @@ public class ExcelUtil {
                 }
                 dataRowIndex++;
             }
+            FileOutputStream fos = new FileOutputStream(file);
+            workbook.write(fos);
+            fos.close();
 
             workbook.write(byteArrayOutputStream);
             return  new ByteArrayInputStream(byteArrayOutputStream.toByteArray());

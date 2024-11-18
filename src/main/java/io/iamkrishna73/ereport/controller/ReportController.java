@@ -38,7 +38,7 @@ public class ReportController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> getReport(@RequestParam(required = false) String planName, @RequestParam(required = false) String planStatus, @RequestParam(required = false) String gender, @RequestParam(required = false) String planStartDate, @RequestParam(required = false) String planEndDate) {
+    public ResponseEntity<?> getPlan(@RequestParam(required = false) String planName, @RequestParam(required = false) String planStatus, @RequestParam(required = false) String gender, @RequestParam(required = false) String planStartDate, @RequestParam(required = false) String planEndDate) {
 
         System.out.println("Received Plan Name: " + planName);
         System.out.println("Received Plan Status: " + planStatus);
@@ -46,15 +46,15 @@ public class ReportController {
         System.out.println("Start Date: " + planStartDate);
         System.out.println("End Date: " + planEndDate);
 
-        List<CitizenPlan> citizenPlanList = reportService.sendData(planName, planStatus, gender, planStartDate, planEndDate);
+        List<CitizenPlan> citizenPlanList = reportService.searchPlan(planName, planStatus, gender, planStartDate, planEndDate);
         System.out.println(citizenPlanList);
         //return null;
         return new ResponseEntity<>(citizenPlanList, HttpStatus.ACCEPTED);
     }
-    @GetMapping("/download")
-    private ResponseEntity<InputStreamResource> download() throws IOException {
+    @GetMapping("/download/excel")
+    private ResponseEntity<InputStreamResource> downloadToExcel() throws IOException {
         String fileName ="plans.xlsx";
-        ByteArrayInputStream inputStream = reportService.getDataDownloaded();
+        ByteArrayInputStream inputStream = reportService.downloadToExcel();
         InputStreamResource    response = new InputStreamResource(inputStream);
 
         ResponseEntity<InputStreamResource> responseEntity = ResponseEntity.ok()
@@ -62,4 +62,18 @@ public class ReportController {
                 .contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(response);
         return responseEntity;
     }
+
+    @GetMapping(value = "/download/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<InputStreamResource> downloadToPdf() throws IOException {
+        ByteArrayInputStream bis = reportService.downloadToPdf();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=Plans.pdf"); // Change to 'attachment' for download
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(new InputStreamResource(bis));
+    }
+
 }

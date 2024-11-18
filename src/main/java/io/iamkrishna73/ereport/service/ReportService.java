@@ -2,24 +2,24 @@ package io.iamkrishna73.ereport.service;
 
 import io.iamkrishna73.ereport.entity.CitizenPlan;
 import io.iamkrishna73.ereport.repos.CitizenPlanRepository;
-import io.iamkrishna73.ereport.request.SearchRequest;
-import io.iamkrishna73.ereport.utils.ExcelGenerator;
-import io.iamkrishna73.ereport.utils.ExcelUtil;
-import jakarta.servlet.http.HttpServletResponse;
+import io.iamkrishna73.ereport.utils.EmailUtils;
+import io.iamkrishna73.ereport.utils.ExcelUtils;
+import io.iamkrishna73.ereport.utils.PdfUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 @Service
 public class ReportService implements IReportService {
     private final CitizenPlanRepository citizenPlanRepository;
-    private final ExcelGenerator excelGenerator;
+    private final EmailUtils emailUtil;
 
-    public ReportService(CitizenPlanRepository citizenPlanRepository, ExcelGenerator excelGenerator) {
+    public ReportService(CitizenPlanRepository citizenPlanRepository, EmailUtils emailUtil) {
         this.citizenPlanRepository = citizenPlanRepository;
-        this.excelGenerator = excelGenerator;
+        this.emailUtil = emailUtil;
     }
 
     @Override
@@ -30,20 +30,36 @@ public class ReportService implements IReportService {
     public List<String> getPlanStatus() {
         return citizenPlanRepository.getPlanStatus();
     }
-    @Override
-    public List<CitizenPlan> searchPlan(SearchRequest searchRequest) {
 
-        return citizenPlanRepository.findAll();
+    @Override
+    public List<CitizenPlan> searchPlan(String planName, String planStatus, String gender, String planStartDate, String planEndDate) {
+        return citizenPlanRepository.findCitizenWithSpecificFields(planName, planStatus, gender, planStartDate,planEndDate);
     }
     @Override
-    public ByteArrayInputStream getDataDownloaded() throws IOException {
+    public ByteArrayInputStream downloadToExcel() throws IOException {
+        File file = new File("Plan.xls");
         List<CitizenPlan> plans = citizenPlanRepository.findAll();
-        ByteArrayInputStream data = ExcelUtil.dataToExcel(plans);
+        ByteArrayInputStream data = ExcelUtils.downloadToExcel(plans, file);
+
+        String subject = "Test mail subject";
+        String body = "<h1>Please find the Report data attached excel file.</h1>";
+        String to = "krishnasingj137333@gmail.com";
+        emailUtil.sendEmail(subject, body, to, file);
+        file.delete();
         return data;
     }
-
     @Override
-    public List<CitizenPlan> sendData(String planName, String planStatus, String gender, String planStartDate, String planEndDate) {
-        return citizenPlanRepository.findCitizenWithSpecificFields(planName, planStatus, gender, planStartDate,planEndDate);
+    public ByteArrayInputStream downloadToPdf() throws IOException {
+        File file = new File("Plan.pdf");
+
+        List<CitizenPlan> plans = citizenPlanRepository.findAll();
+        ByteArrayInputStream data = PdfUtils.downloadToPdf(plans, file);
+        String subject = "Test mail subject";
+        String body = "<h1>Please find the Report data attached pdf file.</h1>";
+        String to = "krishnasingj137333@gmail.com";
+
+        emailUtil.sendEmail(subject, body, to, file);
+        file.delete();
+        return data;
     }
 }

@@ -13,10 +13,9 @@ import java.util.Map;
 public interface IReportService {
     List<String> getPlanNames();
     List<String> getPlanStatus();
-    List<CitizenPlan> searchPlan(SearchRequest searchRequest);
+    ByteArrayInputStream downloadToExcel() throws IOException;    //  List<CitizenPlan> sendData();
 
+    List<CitizenPlan> searchPlan(String planName, String planStatus, String gender, String planStartDate, String planEndDate);
 
-    ByteArrayInputStream getDataDownloaded() throws IOException;    //  List<CitizenPlan> sendData();
-
-    List<CitizenPlan> sendData(String planName, String planStatus, String gender, String planStartDate, String planEndDate);
+    ByteArrayInputStream downloadToPdf()throws IOException;
 }
