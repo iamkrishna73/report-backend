@@ -8,7 +8,6 @@ import io.iamkrishna73.ereport.utils.PdfUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -36,30 +35,49 @@ public class ReportService implements IReportService {
         return citizenPlanRepository.findCitizenWithSpecificFields(planName, planStatus, gender, planStartDate,planEndDate);
     }
     @Override
-    public ByteArrayInputStream downloadToExcel() throws IOException {
-        File file = new File("Plan.xls");
+    public void sendExcelReportByEmail() throws IOException {
         List<CitizenPlan> plans = citizenPlanRepository.findAll();
-        ByteArrayInputStream data = ExcelUtils.downloadToExcel(plans, file);
 
+        // Generate the Excel file as a ByteArrayInputStream
+        ByteArrayInputStream data = ExcelUtils.downloadToExcel(plans);
+
+        // Prepare email details
         String subject = "Test mail subject";
-        String body = "<h1>Please find the Report data attached excel file.</h1>";
+        String body = "<h1>Please find the attached Excel report.</h1>";
         String to = "krishnasingj137333@gmail.com";
-        emailUtil.sendEmail(subject, body, to, file);
-        file.delete();
-        return data;
+
+        // Send the email with the ByteArrayInputStream as an attachment
+        emailUtil.sendEmail(subject, body, to, "plans.xlsx", data);
     }
+
+//    @Override
+//    public ByteArrayInputStream downloadToPdf() throws IOException {
+//        File file = new File("Plan.pdf");
+//
+//        List<CitizenPlan> plans = citizenPlanRepository.findAll();
+//        ByteArrayInputStream data = PdfUtils.downloadToPdf(plans, file);
+//        String subject = "Test mail subject";
+//        String body = "<h1>Please find the Report data attached pdf file.</h1>";
+//        String to = "krishnasingj137333@gmail.com";
+//
+//        emailUtil.sendEmail(subject, body, to, file);
+//        file.delete();
+//        return data;
+//    }
     @Override
-    public ByteArrayInputStream downloadToPdf() throws IOException {
-        File file = new File("Plan.pdf");
-
+    public void sendPdfReportByEmail() throws IOException {
         List<CitizenPlan> plans = citizenPlanRepository.findAll();
-        ByteArrayInputStream data = PdfUtils.downloadToPdf(plans, file);
+
+        // Generate the PDF as a ByteArrayInputStream
+        ByteArrayInputStream data = PdfUtils.downloadToPdf(plans);
+
+        // Prepare email details
         String subject = "Test mail subject";
-        String body = "<h1>Please find the Report data attached pdf file.</h1>";
+        String body = "<h1>Please find the attached PDF report.</h1>";
         String to = "krishnasingj137333@gmail.com";
 
-        emailUtil.sendEmail(subject, body, to, file);
-        file.delete();
-        return data;
+        // Send the email with the ByteArrayInputStream as an attachment
+        emailUtil.sendEmail(subject, body, to, "Plans.pdf", data);
     }
+
 }

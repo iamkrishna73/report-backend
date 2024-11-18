@@ -12,61 +12,41 @@ import java.io.*;
 import java.util.List;
 
 public class ExcelUtils {
-    public static String HEADER[] = {"id", "citizen name", "plan name", "plan status", "plan start date", "plan end date", "benefits amount"};
-    public static String SHEET_NAME = "PlansSheet";
-    public static ByteArrayInputStream downloadToExcel(List<CitizenPlan> citizenPlanList, File file) throws IOException {
 
-        Workbook workbook  = new XSSFWorkbook();
+    public static ByteArrayInputStream downloadToExcel(List<CitizenPlan> plans) {
+        Workbook workbook = new XSSFWorkbook();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        ByteArrayOutputStream byteArrayOutputStream  = new ByteArrayOutputStream();
         try {
-            Sheet sheet = workbook.createSheet(SHEET_NAME);
-            Row row = sheet.createRow(0);
+            Sheet sheet = workbook.createSheet("Citizen Plans");
 
-            for (int i  =0; i< HEADER.length;i++){
-
-                Cell cell = row.createCell(i);
-                cell.setCellValue(HEADER[i]);
+            // Create Header Row
+            Row headerRow = sheet.createRow(0);
+            String[] columns = {"ID", "Citizen Name", "Plan Name", "Plan Status", "Plan Start Date", "Plan End Date", "Benefits Amount"};
+            for (int i = 0; i < columns.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(columns[i]);
             }
 
-            int dataRowIndex = 1;
-            for (CitizenPlan citizenPlan :citizenPlanList){
-                Row dataRow = sheet.createRow(dataRowIndex);
-                dataRow.createCell(0).setCellValue(citizenPlan.getCitizenId());
-                dataRow.createCell(1).setCellValue(citizenPlan.getCitizenName());
-                dataRow.createCell(2).setCellValue(citizenPlan.getPlanName());
-                dataRow.createCell(3).setCellValue(citizenPlan.getPlanStatus());
-                if (null != citizenPlan.getPlanStartDate()) {
-                    dataRow.createCell(4).setCellValue(citizenPlan.getPlanStartDate());
-                } else {
-                    dataRow.createCell(4).setCellValue("N/A");
-
-                }
-                if (null != citizenPlan.getPlanEndDate()) {
-                    dataRow.createCell(5).setCellValue(citizenPlan.getPlanEndDate());
-                } else {
-                    dataRow.createCell(5).setCellValue("N/A");
-                }
-                if (null != citizenPlan.getBenefitsAmount()) {
-                    dataRow.createCell(6).setCellValue(citizenPlan.getBenefitsAmount());
-                } else {
-                    dataRow.createCell(6).setCellValue("N/A");
-
-                }
-                dataRowIndex++;
+            // Populate Rows with Data
+            int rowIndex = 1;
+            for (CitizenPlan plan : plans) {
+                Row row = sheet.createRow(rowIndex++);
+                row.createCell(0).setCellValue(plan.getCitizenId());
+                row.createCell(1).setCellValue(plan.getCitizenName());
+                row.createCell(2).setCellValue(plan.getPlanName());
+                row.createCell(3).setCellValue(plan.getPlanStatus());
+                row.createCell(4).setCellValue(plan.getPlanStartDate() != null ? plan.getPlanStartDate().toString() : "N/A");
+                row.createCell(5).setCellValue(plan.getPlanEndDate() != null ? plan.getPlanEndDate().toString() : "N/A");
+                row.createCell(6).setCellValue(plan.getBenefitsAmount() != null ? plan.getBenefitsAmount().toString() : "N/A");
             }
-            FileOutputStream fos = new FileOutputStream(file);
-            workbook.write(fos);
-            fos.close();
 
-            workbook.write(byteArrayOutputStream);
-            return  new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+            // Write to Output Stream
+            workbook.write(out);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
-        finally {
-            workbook.close();
-            byteArrayOutputStream.close();
-        }
+
+        return new ByteArrayInputStream(out.toByteArray());
     }
 }

@@ -2,20 +2,13 @@ package io.iamkrishna73.ereport.controller;
 
 import io.iamkrishna73.ereport.entity.CitizenPlan;
 import io.iamkrishna73.ereport.service.IReportService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -51,29 +44,34 @@ public class ReportController {
         //return null;
         return new ResponseEntity<>(citizenPlanList, HttpStatus.ACCEPTED);
     }
-    @GetMapping("/download/excel")
-    private ResponseEntity<InputStreamResource> downloadToExcel() throws IOException {
-        String fileName ="plans.xlsx";
-        ByteArrayInputStream inputStream = reportService.downloadToExcel();
-        InputStreamResource    response = new InputStreamResource(inputStream);
 
-        ResponseEntity<InputStreamResource> responseEntity = ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,"attachment;filename="+fileName)
-                .contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(response);
-        return responseEntity;
+    @GetMapping("/send-excel")
+    public ResponseEntity<String> sendExcelByEmail() {
+        try {
+            // Call the service to generate and send the Excel file via email
+            reportService.sendExcelReportByEmail();
+            // Return a success response
+            return ResponseEntity.ok("Excel report has been sent via email.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Return an error response if something goes wrong
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send the Excel report via email.");
+        }
+    }
+    @GetMapping("/send-pdf")
+    public ResponseEntity<String> sendPdfByEmail() {
+        try {
+            // Call the service to generate and send the PDF via email
+            reportService.sendPdfReportByEmail();
+
+            // Return a success response
+            return ResponseEntity.ok("PDF report has been sent via email.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Return an error response if something goes wrong
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send the PDF report via email.");
+        }
     }
 
-    @GetMapping(value = "/download/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<InputStreamResource> downloadToPdf() throws IOException {
-        ByteArrayInputStream bis = reportService.downloadToPdf();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=Plans.pdf"); // Change to 'attachment' for download
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(new InputStreamResource(bis));
-    }
 
 }
